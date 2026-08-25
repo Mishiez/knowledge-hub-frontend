@@ -3,17 +3,20 @@ import type { Post } from '../types/post';
 import { getPosts, type Scenario } from '../services/posts';
 import PostList from '../components/PostList/PostList';
 import SearchBar from '../components/SearchBar/SearchBar';
+import Pagination from '../components/Pagination/Pagination';
 import LoadingState from '../components/states/LoadingState';
 import EmptyState from '../components/states/EmptyState';
 import ErrorState from '../components/states/ErrorState';
 
 const DEV_SCENARIO: Scenario = 'success';
+const PAGE_SIZE = 2; // small on purpose, so pagination is actually testable with 3 mock posts
 
 function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const loadPosts = useCallback(() => {
     setLoading(true);
@@ -35,8 +38,6 @@ function HomePage() {
     loadPosts();
   }, [loadPosts]);
 
-  // Derived — not stored in state. Recalculated on every render from
-  // posts + searchTerm, so it's always in sync with both.
   const filteredPosts = posts.filter((post) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -45,16 +46,35 @@ function HomePage() {
     );
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
+
+  const visiblePosts = filteredPosts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  function handleSearchChange(value: string) {
+    setSearchTerm(value);
+    setCurrentPage(1); // new search = new result set, page 1 makes sense again
+  }
+
   return (
     <div className="home-page">
       <h1>Knowledge Hub</h1>
-      <SearchBar value={searchTerm} onChange={setSearchTerm} />
+      <SearchBar value={searchTerm} onChange={handleSearchChange} />
 
       {loading && <LoadingState />}
       {!loading && error && <ErrorState onRetry={loadPosts} />}
       {!loading && !error && filteredPosts.length === 0 && <EmptyState />}
       {!loading && !error && filteredPosts.length > 0 && (
-        <PostList posts={filteredPosts} />
+        <>
+          <PostList posts={visiblePosts} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
       )}
     </div>
   );

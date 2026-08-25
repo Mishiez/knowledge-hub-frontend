@@ -5,6 +5,8 @@ interface PostCardProps {
 }
 
 function PostCard({ post }: PostCardProps) {
+  console.log(`Rendering PostCard: ${post.title}`);
+
   return (
     <article className="post-card">
       <h2>{post.title}</h2>

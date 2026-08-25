@@ -1,18 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Post } from '../types/post';
-import { getPosts } from '../services/posts';
+import { getPosts, type Scenario } from '../services/posts';
 import PostList from '../components/PostList/PostList';
+import LoadingState from '../components/states/LoadingState';
+import EmptyState from '../components/states/EmptyState';
+import ErrorState from '../components/states/ErrorState';
+
+// Temporary dev-only control so you can manually confirm all four states.
+// Not a real feature — swap/remove once you've visually verified each one.
+const DEV_SCENARIO: Scenario = 'error';
 
 function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  useEffect(() => {
+  const loadPosts = useCallback(() => {
     setLoading(true);
     setError(false);
 
-    getPosts('success')
+    getPosts(DEV_SCENARIO)
       .then((data) => {
         setPosts(data);
       })
@@ -24,12 +31,17 @@ function HomePage() {
       });
   }, []);
 
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
+
   return (
     <div className="home-page">
       <h1>Knowledge Hub</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>Something went wrong.</p>}
-      {!loading && !error && <PostList posts={posts} />}
+      {loading && <LoadingState />}
+      {!loading && error && <ErrorState onRetry={loadPosts} />}
+      {!loading && !error && posts.length === 0 && <EmptyState />}
+      {!loading && !error && posts.length > 0 && <PostList posts={posts} />}
     </div>
   );
 }

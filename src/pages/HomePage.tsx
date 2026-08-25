@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Post } from '../types/post';
 import { getPosts, type Scenario } from '../services/posts';
 import PostList from '../components/PostList/PostList';
@@ -38,13 +38,14 @@ function HomePage() {
     loadPosts();
   }, [loadPosts]);
 
-  const filteredPosts = posts.filter((post) => {
-    const term = searchTerm.toLowerCase();
-    return (
+ const filteredPosts = useMemo(() => {
+  const term = searchTerm.toLowerCase();
+  return posts.filter(
+    (post) =>
       post.title.toLowerCase().includes(term) ||
       post.content.toLowerCase().includes(term)
-    );
-  });
+  );
+}, [posts, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
 

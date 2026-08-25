@@ -1,13 +1,13 @@
 # Knowledge Hub — Frontend
 
-A React + TypeScript frontend for the Knowledge Hub project, built as part of a structured developer training program (Gate C1). The goal of this gate was to learn core React fundamentals — state, derived data, controlled components, conditional rendering, and testing — using a mock data layer, with a real Django API connection deferred to a later, separate task.
+A React + TypeScript frontend for the Knowledge Hub project. The goal of this gate was to learn core React fundamentals — state, derived data, controlled components, conditional rendering, and testing — using a mock data layer.
 
 ## Tech Stack
 
 - **React 18** + **TypeScript**
 - **Vite** — dev server and build tool
 - **Vitest** + **React Testing Library** — component and interaction testing
-- Plain CSS (no framework, no state-management library — deliberately out of scope for this gate)
+- Plain CSS (no framework, no state-management library)
 
 ## Getting Started
 

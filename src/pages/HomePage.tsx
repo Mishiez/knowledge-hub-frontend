@@ -9,7 +9,7 @@ import EmptyState from '../components/states/EmptyState';
 import ErrorState from '../components/states/ErrorState';
 
 const DEV_SCENARIO: Scenario = 'success';
-const PAGE_SIZE = 2; // small on purpose, so pagination is actually testable with 3 mock posts
+const PAGE_SIZE = 4; // small on purpose, so pagination is actually testable with 3 mock posts
 
 function HomePage() {
   const [posts, setPosts] = useState<Post[]>([]);

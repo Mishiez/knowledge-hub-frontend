@@ -113,3 +113,27 @@ describe('HomePage — interactions', () => {
     expect(screen.getByText('Understanding useEffect')).toBeInTheDocument();
   });
 });
+
+describe('HomePage — loading timing', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('shows loading state before data resolves, then replaces it', async () => {
+    render(<HomePage />);
+
+    // Loading should be visible immediately, synchronously, before any await
+    expect(screen.getByText(/loading posts/i)).toBeInTheDocument();
+
+    // Data hasn't arrived yet — post shouldn't be there
+    expect(
+      screen.queryByText('Understanding useEffect')
+    ).not.toBeInTheDocument();
+
+    // Wait for data to arrive
+    await screen.findByText('Understanding useEffect');
+
+    // Loading state should now be gone
+    expect(screen.queryByText(/loading posts/i)).not.toBeInTheDocument();
+  });
+});

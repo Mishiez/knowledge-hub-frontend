@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import HomePage from './HomePage';
 import * as postsService from '../services/posts';
-import userEvent from '@testing-library/user-event';
 
 describe('HomePage — rendering', () => {
   beforeEach(() => {
@@ -12,11 +12,11 @@ describe('HomePage — rendering', () => {
   it('renders posts given mock data', async () => {
     render(<HomePage />);
 
-    // Loading state should appear first
     expect(screen.getByText(/loading posts/i)).toBeInTheDocument();
 
-    // Then posts should appear once the mock resolves
-    const post = await screen.findByText('Understanding useEffect');
+    const post = await screen.findByText(
+      'Why Do We Remember Some Things and Forget Others?'
+    );
     expect(post).toBeInTheDocument();
   });
 
@@ -44,7 +44,6 @@ describe('HomePage — rendering', () => {
   });
 });
 
-
 describe('HomePage — interactions', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -54,18 +53,15 @@ describe('HomePage — interactions', () => {
     const user = userEvent.setup();
     render(<HomePage />);
 
-    // wait for initial data to load
-    await screen.findByText('Understanding useEffect');
+    await screen.findByText('Why Do We Remember Some Things and Forget Others?');
 
     const searchInput = screen.getByPlaceholderText(/search posts/i);
-    await user.type(searchInput, 'props');
+    await user.type(searchInput, 'goosebumps');
 
-    // matching post should remain
-    expect(screen.getByText('Why Props Flow Down')).toBeInTheDocument();
+    expect(screen.getByText('Why Do We Get Goosebumps?')).toBeInTheDocument();
 
-    // non-matching post should be gone
     expect(
-      screen.queryByText('Understanding useEffect')
+      screen.queryByText('Why Do We Remember Some Things and Forget Others?')
     ).not.toBeInTheDocument();
   });
 
@@ -73,22 +69,28 @@ describe('HomePage — interactions', () => {
     const user = userEvent.setup();
     render(<HomePage />);
 
-    // page 1 should show the first two mock posts
-    await screen.findByText('Understanding useEffect');
-    expect(screen.getByText('Why Props Flow Down')).toBeInTheDocument();
+    // PAGE_SIZE is 4, so page 1 shows posts 1–4
+    await screen.findByText('Why Do We Remember Some Things and Forget Others?');
     expect(
-      screen.queryByText('TypeScript Interfaces vs Types')
+      screen.getByText('What Would Happen If the Moon Disappeared?')
+    ).toBeInTheDocument();
+
+    // post 5 should not be visible yet
+    expect(
+      screen.queryByText('Why Some Ideas Spread Faster Than Others')
     ).not.toBeInTheDocument();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
     await user.click(nextButton);
 
-    // page 2 should show the third post, and page 1's posts should be gone
+    // page 2 should show posts 5–8
     expect(
-      screen.getByText('TypeScript Interfaces vs Types')
+      screen.getByText('Why Some Ideas Spread Faster Than Others')
     ).toBeInTheDocument();
+
+    // post 1 should no longer be visible
     expect(
-      screen.queryByText('Understanding useEffect')
+      screen.queryByText('Why Do We Remember Some Things and Forget Others?')
     ).not.toBeInTheDocument();
   });
 
@@ -96,21 +98,18 @@ describe('HomePage — interactions', () => {
     const user = userEvent.setup();
     render(<HomePage />);
 
-    await screen.findByText('Understanding useEffect');
+    await screen.findByText('Why Do We Remember Some Things and Forget Others?');
 
-    // move to page 2 first
     const nextButton = screen.getByRole('button', { name: /next/i });
     await user.click(nextButton);
     expect(
-      screen.getByText('TypeScript Interfaces vs Types')
+      screen.getByText('Why Some Ideas Spread Faster Than Others')
     ).toBeInTheDocument();
 
-    // now search for something that only matches post 1
     const searchInput = screen.getByPlaceholderText(/search posts/i);
-    await user.type(searchInput, 'useEffect');
+    await user.type(searchInput, 'goosebumps');
 
-    // should have reset to page 1 and show the matching post
-    expect(screen.getByText('Understanding useEffect')).toBeInTheDocument();
+    expect(screen.getByText('Why Do We Get Goosebumps?')).toBeInTheDocument();
   });
 });
 
@@ -122,18 +121,14 @@ describe('HomePage — loading timing', () => {
   it('shows loading state before data resolves, then replaces it', async () => {
     render(<HomePage />);
 
-    // Loading should be visible immediately, synchronously, before any await
     expect(screen.getByText(/loading posts/i)).toBeInTheDocument();
 
-    // Data hasn't arrived yet — post shouldn't be there
     expect(
-      screen.queryByText('Understanding useEffect')
+      screen.queryByText('Why Do We Remember Some Things and Forget Others?')
     ).not.toBeInTheDocument();
 
-    // Wait for data to arrive
-    await screen.findByText('Understanding useEffect');
+    await screen.findByText('Why Do We Remember Some Things and Forget Others?');
 
-    // Loading state should now be gone
     expect(screen.queryByText(/loading posts/i)).not.toBeInTheDocument();
   });
 });

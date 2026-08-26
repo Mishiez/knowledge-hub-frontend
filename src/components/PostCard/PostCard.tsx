@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Post } from '../../types/post';
 
 interface PostCardProps {
@@ -7,7 +8,7 @@ interface PostCardProps {
 function PostCard({ post }: PostCardProps) {
   return (
     <article className="post-card">
-      <h2>{post.title}</h2>
+      <h2><Link to={`/posts/${post.slug}`}>{post.title}</Link></h2>
       <p className="post-meta">
         By {post.author} · {new Date(post.created_at).toLocaleDateString()}
       </p>

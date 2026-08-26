@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Post } from '../types/post';
-import { getPosts, type Scenario } from '../services/posts';
+import { getPosts } from '../api/posts';
 import PostList from '../components/PostList/PostList';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Pagination from '../components/Pagination/Pagination';
@@ -8,7 +8,7 @@ import LoadingState from '../components/states/LoadingState';
 import EmptyState from '../components/states/EmptyState';
 import ErrorState from '../components/states/ErrorState';
 
-const DEV_SCENARIO: Scenario = 'success';
+// const DEV_SCENARIO: Scenario = 'success';
 const PAGE_SIZE = 4; // small on purpose, so pagination is actually testable with 3 mock posts
 
 function HomePage() {
@@ -22,7 +22,7 @@ function HomePage() {
     setLoading(true);
     setError(false);
 
-    getPosts(DEV_SCENARIO)
+    getPosts()
       .then((data) => {
         setPosts(data);
       })

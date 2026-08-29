@@ -16,8 +16,22 @@ function App() {
         <Route path="/posts/:slug" element={<PostDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/posts/new" element={<ProtectedRoute><PostFormPage /></ProtectedRoute>} />
-        <Route path="/posts/:slug/edit" element={<ProtectedRoute><PostFormPage /></ProtectedRoute>} />
+        <Route
+          path="/posts/new"
+          element={
+            <ProtectedRoute>
+              <PostFormPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/posts/:slug/edit"
+          element={
+            <ProtectedRoute>
+              <PostFormPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

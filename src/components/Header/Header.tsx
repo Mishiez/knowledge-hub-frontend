@@ -12,7 +12,9 @@ function Header() {
 
   return (
     <header className="site-header">
-      <Link to="/" className="logo">Knowledge Hub</Link>
+      <Link to="/" className="logo">
+        Knowledge Hub
+      </Link>
       <nav>
         {user ? (
           <>

@@ -66,9 +66,7 @@ function PostFormPage() {
       }
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : 'Could not save post. Check your input and try again.';
+        err instanceof Error ? err.message : 'Could not save post. Check your input and try again.';
       setError(message);
       showToast(message, 'error');
     }

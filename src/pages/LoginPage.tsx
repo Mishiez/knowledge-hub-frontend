@@ -20,8 +20,7 @@ function LoginPage() {
       showToast('Logged in successfully');
       navigate('/');
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Invalid username or password.';
+      const message = err instanceof Error ? err.message : 'Invalid username or password.';
       setError(message);
       showToast(message, 'error');
     }

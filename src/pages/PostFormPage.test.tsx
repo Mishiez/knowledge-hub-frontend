@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import PostFormPage from './PostFormPage';
 import * as postsApi from '../api/posts';
 import { AuthContext } from '../context/AuthContext';
-import { ToastProvider } from '../context/ToastContext';
+import { ToastProvider } from '../context/ToastProvider';
 
 const mockAuthValue = {
   user: { id: 1, username: 'michelle', email: 'michelle@example.com' },
@@ -81,9 +81,7 @@ describe('PostFormPage — submission', () => {
     await user.type(screen.getByPlaceholderText(/content/i), 'Some content');
     await user.click(screen.getByRole('button', { name: /publish/i }));
 
-    const errorMessages = await screen.findAllByText(
-      'A post with this slug already exists.'
-    );
+    const errorMessages = await screen.findAllByText('A post with this slug already exists.');
     expect(errorMessages.length).toBeGreaterThan(0);
   });
 });

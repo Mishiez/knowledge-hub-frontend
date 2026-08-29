@@ -18,10 +18,7 @@ export async function register(data: {
   return response.json();
 }
 
-export async function login(data: {
-  username: string;
-  password: string;
-}): Promise<AuthResponse> {
+export async function login(data: { username: string; password: string }): Promise<AuthResponse> {
   const response = await fetch(`${BASE_URL}/auth/login/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

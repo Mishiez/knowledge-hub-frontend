@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface CommentFormProps {
   onSubmit: (body: string) => void;
 }
 
 export function CommentForm({ onSubmit }: CommentFormProps) {
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!body.trim()) return;
     onSubmit(body);
-    setBody("");
+    setBody('');
   };
 
   return (

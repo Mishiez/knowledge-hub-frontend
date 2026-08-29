@@ -8,7 +8,9 @@ interface PostCardProps {
 function PostCard({ post }: PostCardProps) {
   return (
     <article className="post-card">
-      <h2><Link to={`/posts/${post.slug}`}>{post.title}</Link></h2>
+      <h2>
+        <Link to={`/posts/${post.slug}`}>{post.title}</Link>
+      </h2>
       <p className="post-meta">
         By {post.author} · {new Date(post.created_at).toLocaleDateString()}
       </p>

@@ -1,12 +1,12 @@
 :root {
-  --color-bg: #F7F5EF;           /* Cream */
-  --color-surface: #FFFFFF;      /* White */
-  --color-surface-subtle: #E4ECE7; /* Light sage */
-  --color-border: #E4ECE7;       /* Light sage, doubling as border */
-  --color-heading: #202522;      /* Charcoal */
-  --color-text-muted: #66706A;   /* Soft gray */
-  --color-accent: #6B8E7B;       /* Sage */
-  --color-error: #b3453f;        /* Muted red, kept distinct from sage so error still reads as error */
+  --color-bg: #f7f5ef; /* Cream */
+  --color-surface: #ffffff; /* White */
+  --color-surface-subtle: #e4ece7; /* Light sage */
+  --color-border: #e4ece7; /* Light sage, doubling as border */
+  --color-heading: #202522; /* Charcoal */
+  --color-text-muted: #66706a; /* Soft gray */
+  --color-accent: #6b8e7b; /* Sage */
+  --color-error: #b3453f; /* Muted red, kept distinct from sage so error still reads as error */
   --color-error-bg: #f7e9e8;
   --radius: 8px;
   --spacing: 16px;
@@ -145,7 +145,9 @@ body {
   border-radius: var(--radius);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .pagination button:hover:not(:disabled) {
@@ -417,6 +419,12 @@ body {
 }
 
 @keyframes toast-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

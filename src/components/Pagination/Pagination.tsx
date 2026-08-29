@@ -14,19 +14,13 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
 
   return (
     <div className="pagination">
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={isFirstPage}
-      >
+      <button onClick={() => onPageChange(currentPage - 1)} disabled={isFirstPage}>
         Prev
       </button>
       <span>
         Page {currentPage} of {totalPages}
       </span>
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={isLastPage}
-      >
+      <button onClick={() => onPageChange(currentPage + 1)} disabled={isLastPage}>
         Next
       </button>
     </div>

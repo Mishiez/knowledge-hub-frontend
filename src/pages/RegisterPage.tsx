@@ -30,9 +30,7 @@ function RegisterPage() {
       navigate('/');
     } catch (err) {
       const message =
-        err instanceof Error
-          ? err.message
-          : 'Registration failed. Try a different username.';
+        err instanceof Error ? err.message : 'Registration failed. Try a different username.';
       setError(message);
       showToast(message, 'error');
     }

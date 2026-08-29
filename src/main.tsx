@@ -1,10 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { AuthProvider } from './context/AuthContext';
-import { ToastProvider } from "./context/ToastContext";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AuthProvider } from './context/AuthProvider.tsx';
+import { ToastProvider } from './context/ToastProvider.tsx';
 
-import './index.css'
-import App from './App.tsx'
+import './index.css';
+import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,5 +13,5 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </ToastProvider>
     </AuthProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

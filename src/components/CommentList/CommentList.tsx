@@ -1,5 +1,5 @@
-import type { Comment as CommentType } from "../../types/comment";
-import { Comment } from "../Comment/Comment";
+import type { Comment as CommentType } from '../../types/comment';
+import { Comment } from '../Comment/Comment';
 
 interface CommentListProps {
   comments: CommentType[];

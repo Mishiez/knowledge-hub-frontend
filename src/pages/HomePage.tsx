@@ -8,7 +8,6 @@ import LoadingState from '../components/states/LoadingState';
 import EmptyState from '../components/states/EmptyState';
 import ErrorState from '../components/states/ErrorState';
 
-// const DEV_SCENARIO: Scenario = 'success';
 const PAGE_SIZE = 4; // small on purpose, so pagination is actually testable with 3 mock posts
 
 function HomePage() {
@@ -38,21 +37,16 @@ function HomePage() {
     loadPosts();
   }, [loadPosts]);
 
- const filteredPosts = useMemo(() => {
-  const term = searchTerm.toLowerCase();
-  return posts.filter(
-    (post) =>
-      post.title.toLowerCase().includes(term) ||
-      post.content.toLowerCase().includes(term)
-  );
-}, [posts, searchTerm]);
+  const filteredPosts = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return posts.filter(
+      (post) => post.title.toLowerCase().includes(term) || post.content.toLowerCase().includes(term)
+    );
+  }, [posts, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
 
-  const visiblePosts = filteredPosts.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
+  const visiblePosts = filteredPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   function handleSearchChange(value: string) {
     setSearchTerm(value);

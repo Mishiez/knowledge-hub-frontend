@@ -22,6 +22,7 @@ function PostDetailPage() {
   // Load post
   useEffect(() => {
     if (!slug) return;
+
     setLoading(true);
     setError(false);
     getPostBySlug(slug)
@@ -29,13 +30,10 @@ function PostDetailPage() {
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [slug]);
-
   // Load comments once we have the post
   useEffect(() => {
     if (!post?.id) return;
-    getComments(post.id)
-      .then(setComments)
-      .catch(console.error);
+    getComments(post.id).then(setComments).catch(console.error);
   }, [post?.id]);
 
   async function handleDeletePost() {
@@ -76,7 +74,9 @@ function PostDetailPage() {
 
   return (
     <article className="post-detail">
-      <Link to="/" className="back-link">← Back</Link>
+      <Link to="/" className="back-link">
+        ← Back
+      </Link>
       <h1>{post.title}</h1>
       <p className="post-meta">
         By {post.author} · {new Date(post.created_at).toLocaleDateString()}
@@ -85,8 +85,12 @@ function PostDetailPage() {
 
       {isOwner && (
         <div className="post-detail-actions">
-          <Link to={`/posts/${post.slug}/edit`} className="btn-edit">Edit</Link>
-          <button onClick={handleDeletePost} className="btn-delete">Delete</button>
+          <Link to={`/posts/${post.slug}/edit`} className="btn-edit">
+            Edit
+          </Link>
+          <button onClick={handleDeletePost} className="btn-delete">
+            Delete
+          </button>
         </div>
       )}
 

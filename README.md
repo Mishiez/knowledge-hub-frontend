@@ -1,6 +1,6 @@
 # Knowledge Hub — Frontend
 
-A React + TypeScript frontend for the Knowledge Hub project. Implements a searchable, paginated list of posts, user authentication, post creation/editing/deletion, and comments — connected to a live Django REST Framework API. Includes a full unit/integration test suite, linting and formatting, and an end-to-end test covering the core user journey.
+A React + TypeScript frontend for Knowledge Hub. Implements a searchable, paginated list of posts, user authentication, comments, and post creation/editing/deletion.
 
 **Backend repo:** https://github.com/Mishiez/knowledge-hub
 

@@ -21,6 +21,7 @@ const mockPosts: Post[] = Array.from({ length: 10 }, (_, i) => ({
   content: `Content for post number ${i + 1}, used for search and pagination tests.`,
   author: 'Test Author',
   created_at: '2026-08-01T10:00:00Z',
+  like_count: 0,
 }));
 
 describe('HomePage — rendering', () => {

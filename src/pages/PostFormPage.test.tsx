@@ -44,6 +44,7 @@ describe('PostFormPage — submission', () => {
       content: 'Some content',
       author: 'michelle',
       created_at: '2026-08-27T10:00:00Z',
+      like_count: 0,
     });
 
     const user = userEvent.setup();

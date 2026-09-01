@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import type { Post } from '../types/post';
-import type { Comment } from '../types/comment'; // or '../types/comment' if you split it
-import { getPostBySlug, deletePost } from '../api/posts';
+import type { Comment } from '../types/comment';
+import { getPostBySlug, deletePost, toggleLike } from '../api/posts';
 import { getComments, createComment, deleteComment } from '../api/comments';
 import { useAuth } from '../context/AuthContext';
 import LoadingState from '../components/states/LoadingState';
@@ -13,13 +13,13 @@ import { CommentForm } from '../components/CommentForm/CommentForm';
 function PostDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user, token } = useAuth(); // assumes { user, token }
+  const { user, token } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [likeState, setLikeState] = useState<{ liked: boolean; count: number } | null>(null);
 
-  // Load post
   useEffect(() => {
     if (!slug) return;
 
@@ -30,11 +30,17 @@ function PostDetailPage() {
       .catch(() => setError(true))
       .finally(() => setLoading(false));
   }, [slug]);
-  // Load comments once we have the post
+
   useEffect(() => {
     if (!post?.id) return;
     getComments(post.id).then(setComments).catch(console.error);
   }, [post?.id]);
+
+  useEffect(() => {
+    if (post) {
+      setLikeState({ liked: false, count: post.like_count });
+    }
+  }, [post]);
 
   async function handleDeletePost() {
     if (!post) return;
@@ -47,11 +53,21 @@ function PostDetailPage() {
     }
   }
 
+  async function handleToggleLike() {
+    if (!post || !user) return;
+    try {
+      const result = await toggleLike(post.id);
+      setLikeState({ liked: result.liked, count: result.like_count });
+    } catch {
+      window.alert('Could not update like.');
+    }
+  }
+
   async function handleCreateComment(body: string) {
     if (!post || !token) return;
     try {
       const newComment = await createComment(post.id, body, token);
-      setComments((prev) => [...prev, newComment]); // local update, no re-fetch
+      setComments((prev) => [...prev, newComment]);
     } catch {
       window.alert('Could not post comment.');
     }
@@ -61,7 +77,7 @@ function PostDetailPage() {
     if (!token) return;
     try {
       await deleteComment(id, token);
-      setComments((prev) => prev.filter((c) => c.id !== id)); // local update
+      setComments((prev) => prev.filter((c) => c.id !== id));
     } catch {
       window.alert('Could not delete comment.');
     }
@@ -83,6 +99,12 @@ function PostDetailPage() {
       </p>
       <p className="post-detail-content">{post.content}</p>
 
+      {user && likeState && (
+        <button onClick={handleToggleLike} className="btn-like">
+          {likeState.liked ? '♥ Liked' : '♡ Like'} ({likeState.count})
+        </button>
+      )}
+
       {isOwner && (
         <div className="post-detail-actions">
           <Link to={`/posts/${post.slug}/edit`} className="btn-edit">
@@ -94,7 +116,6 @@ function PostDetailPage() {
         </div>
       )}
 
-      {/* Comments section */}
       <section className="comments-section">
         <h2>Comments</h2>
         <CommentList

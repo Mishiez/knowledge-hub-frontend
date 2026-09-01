@@ -651,3 +651,18 @@ h3 {
     padding: 24px;
   }
 }
+
+.btn-like {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-heading);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.btn-like:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}

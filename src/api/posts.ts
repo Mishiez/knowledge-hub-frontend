@@ -98,3 +98,14 @@ export async function deletePost(slug: string): Promise<void> {
     throw new Error('Failed to delete post');
   }
 }
+
+export async function toggleLike(postId: number): Promise<{ liked: boolean; like_count: number }> {
+  const response = await fetch(`${BASE_URL}/posts/${postId}/like/`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to toggle like');
+  }
+  return response.json();
+}

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
 :root {
   --color-bg: #f7f5ef; /* Cream */
   --color-surface: #ffffff; /* White */
@@ -5,11 +7,13 @@
   --color-border: #e4ece7; /* Light sage, doubling as border */
   --color-heading: #202522; /* Charcoal */
   --color-text-muted: #66706a; /* Soft gray */
-  --color-accent: #6b8e7b; /* Sage */
+  --color-accent: #6b8e7b; /* Sage — reserved for interactive elements only */
   --color-error: #b3453f; /* Muted red, kept distinct from sage so error still reads as error */
   --color-error-bg: #f7e9e8;
   --radius: 8px;
   --spacing: 16px;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-heading: 'Source Serif 4', Georgia, 'Times New Roman', serif;
 }
 
 * {
@@ -18,33 +22,57 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   background: var(--color-bg);
   color: var(--color-heading);
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+/* ==========================================================================
+   Home page
+   ========================================================================== */
+
 .home-page {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 32px 20px;
+  padding: 48px 20px 32px;
+}
+
+.home-header {
+  margin-bottom: 32px;
 }
 
 .home-page h1 {
-  font-size: 1.75rem;
-  color: var(--color-heading);
-  margin-bottom: 20px;
+  font-size: 2.25rem;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.home-tagline {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin: 0 0 28px;
 }
 
 /* Search */
 .search-bar {
   width: 100%;
-  padding: 10px 14px;
-  font-size: 1rem;
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   background: var(--color-surface);
   color: var(--color-heading);
-  margin-bottom: 24px;
+  margin-bottom: 36px;
 }
 
 .search-bar::placeholder {
@@ -54,47 +82,65 @@ body {
 .search-bar:focus {
   outline: none;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(107, 142, 123, 0.12);
 }
 
-/* Post list */
+/* Post list — editorial feed, not boxed cards */
 .post-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .post-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--spacing);
+  padding: 26px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.post-card:first-child {
+  padding-top: 0;
 }
 
 .post-card h2 {
   margin: 0 0 6px;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.post-card h2 a {
   color: var(--color-heading);
+  text-decoration: none;
+}
+
+.post-card h2 a:hover {
+  color: var(--color-accent);
 }
 
 .post-meta {
-  font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
   color: var(--color-text-muted);
   margin: 0 0 10px;
 }
 
 .post-card p:last-child {
   margin: 0;
-  line-height: 1.5;
-  color: var(--color-heading);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--color-text-muted);
 }
 
-/* States */
+/* ==========================================================================
+   Shared states
+   ========================================================================== */
+
 .loading-state,
 .empty-state {
   text-align: center;
   color: var(--color-text-muted);
-  padding: 40px 0;
+  padding: 48px 0;
+  font-size: 0.95rem;
 }
 
 .error-state {
@@ -124,35 +170,40 @@ body {
   opacity: 0.9;
 }
 
-/* Pagination */
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
 .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
+  padding-top: 8px;
 }
 
 .pagination span {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
 }
 
 .pagination button {
-  padding: 8px 16px;
+  padding: 7px 16px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-heading);
   border-radius: var(--radius);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition:
     background 0.15s ease,
-    border-color 0.15s ease;
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .pagination button:hover:not(:disabled) {
-  background: var(--color-surface-subtle);
   border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .pagination button:disabled {
@@ -160,33 +211,39 @@ body {
   cursor: not-allowed;
 }
 
-/* Header */
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
 .site-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 18px 24px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
 }
 
 .site-header .logo {
+  font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--color-heading);
   text-decoration: none;
+  letter-spacing: -0.01em;
 }
 
 .site-header nav {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .site-header nav a {
   color: var(--color-accent);
   text-decoration: none;
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .site-header nav a:hover {
@@ -213,11 +270,14 @@ body {
   color: var(--color-accent);
 }
 
-/* Auth pages (Login / Register) */
+/* ==========================================================================
+   Auth pages (Login / Register)
+   ========================================================================== */
+
 .auth-page {
   max-width: 400px;
-  margin: 60px auto;
-  padding: 32px;
+  margin: 64px auto;
+  padding: 36px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -225,8 +285,8 @@ body {
 
 .auth-page h1 {
   margin-top: 0;
-  margin-bottom: 20px;
-  color: var(--color-heading);
+  margin-bottom: 22px;
+  font-size: 1.6rem;
 }
 
 .auth-page form {
@@ -240,11 +300,13 @@ body {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 1rem;
+  font-family: var(--font-body);
 }
 
 .auth-page input:focus {
   outline: none;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(107, 142, 123, 0.12);
 }
 
 .auth-page button {
@@ -262,15 +324,19 @@ body {
   opacity: 0.9;
 }
 
-/* Post form (create/edit) */
+/* ==========================================================================
+   Post form (create/edit)
+   ========================================================================== */
+
 .post-form-page {
   max-width: 640px;
-  margin: 40px auto;
+  margin: 48px auto;
   padding: 0 20px;
 }
 
 .post-form-page h1 {
-  color: var(--color-heading);
+  font-size: 1.75rem;
+  margin-bottom: 24px;
 }
 
 .post-form-page form {
@@ -281,11 +347,11 @@ body {
 
 .post-form-page input,
 .post-form-page textarea {
-  padding: 10px 14px;
+  padding: 11px 14px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 1rem;
-  font-family: inherit;
+  font-family: var(--font-body);
   resize: vertical;
 }
 
@@ -293,6 +359,7 @@ body {
 .post-form-page textarea:focus {
   outline: none;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(107, 142, 123, 0.12);
 }
 
 .post-form-page button {
@@ -317,37 +384,53 @@ body {
   margin: 0;
 }
 
-/* Post detail page */
+/* ==========================================================================
+   Post detail page — reading experience
+   ========================================================================== */
+
 .post-detail {
   max-width: 640px;
-  margin: 40px auto;
+  margin: 48px auto;
   padding: 0 20px;
 }
 
 .post-detail .back-link {
   display: inline-block;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
   color: var(--color-accent);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.post-detail .back-link:hover {
+  text-decoration: underline;
 }
 
 .post-detail h1 {
-  color: var(--color-heading);
-  margin-bottom: 6px;
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.post-detail .post-meta {
+  font-size: 0.88rem;
+  margin-bottom: 0;
 }
 
 .post-detail-content {
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.75;
   color: var(--color-heading);
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .post-detail-actions {
   display: flex;
   gap: 12px;
-  margin-top: 28px;
-  padding-top: 20px;
+  margin-top: 36px;
+  padding-top: 22px;
   border-top: 1px solid var(--color-border);
 }
 
@@ -355,14 +438,14 @@ body {
 .btn-delete {
   padding: 8px 16px;
   border-radius: var(--radius);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   cursor: pointer;
   text-decoration: none;
   border: 1px solid var(--color-border);
+  background: none;
 }
 
 .btn-edit {
-  background: var(--color-surface);
   color: var(--color-heading);
 }
 
@@ -372,7 +455,6 @@ body {
 }
 
 .btn-delete {
-  background: none;
   color: var(--color-error);
   border-color: var(--color-error);
 }
@@ -381,15 +463,122 @@ body {
   background: var(--color-error-bg);
 }
 
-/* Post card title as link */
-.post-card h2 a {
-  color: var(--color-heading);
-  text-decoration: none;
+/* ==========================================================================
+   Comments — conversational, not boxed
+   ========================================================================== */
+
+.comments-section {
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-border);
 }
 
-.post-card h2 a:hover {
-  color: var(--color-accent);
+.comments-section h2 {
+  font-size: 1.15rem;
+  margin-bottom: 20px;
 }
+
+.comment {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comment:last-of-type {
+  border-bottom: none;
+}
+
+.comment-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-heading);
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.comment-body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-heading);
+  margin: 0;
+}
+
+.comment-delete {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 6px;
+}
+
+.comment-delete:hover {
+  color: var(--color-error);
+  text-decoration: underline;
+}
+
+.comment-form {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-form textarea {
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  font-family: var(--font-body);
+  resize: vertical;
+  min-height: 70px;
+}
+
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(107, 142, 123, 0.12);
+}
+
+.comment-form button {
+  align-self: flex-start;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.comment-form button:hover {
+  opacity: 0.9;
+}
+
+.comment-login-prompt {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 20px;
+}
+
+.comment-login-prompt a {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Toasts
+   ========================================================================== */
 
 .toast-container {
   position: fixed;
@@ -426,5 +615,39 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .home-page,
+  .post-detail,
+  .post-form-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .home-page h1 {
+    font-size: 1.75rem;
+  }
+
+  .post-detail h1 {
+    font-size: 1.6rem;
+  }
+
+  .site-header {
+    padding: 14px 16px;
+  }
+
+  .site-header nav {
+    gap: 12px;
+  }
+
+  .auth-page {
+    margin: 32px auto;
+    padding: 24px;
   }
 }

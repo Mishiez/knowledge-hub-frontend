@@ -12,7 +12,7 @@ function PostCard({ post }: PostCardProps) {
         <Link to={`/posts/${post.slug}`}>{post.title}</Link>
       </h2>
       <p className="post-meta">
-        By {post.author} · {new Date(post.created_at).toLocaleDateString()}
+        By {post.author} · {new Date(post.created_at).toLocaleDateString()} · ♡ {post.like_count}
       </p>
       <p>{post.content}</p>
     </article>

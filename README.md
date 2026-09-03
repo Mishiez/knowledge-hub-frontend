@@ -1,6 +1,6 @@
 # Knowledge Hub — Frontend
 
-A React + TypeScript frontend for Knowledge Hub. Implements a searchable, paginated list of posts, user authentication, comments, and post creation/editing/deletion.
+A React + TypeScript frontend for Knowledge Hub. Implements a searchable, paginated list of posts, user authentication, comments, likes, and post creation/editing/deletion.
 
 **Backend repo:** https://github.com/Mishiez/knowledge-hub
 
@@ -12,9 +12,24 @@ A React + TypeScript frontend for Knowledge Hub. Implements a searchable, pagina
 - **Vitest** + **React Testing Library** — component and interaction testing
 - **Playwright** — end-to-end testing against a real running app
 - **ESLint** + **Prettier** — linting and formatting
+- **Docker** — multi-stage build served via nginx
 - Plain CSS (no framework, no external state-management library)
 
-## Getting Started
+## Running with Docker (recommended)
+
+This repo is built as part of the full Knowledge Hub stack — see the [backend README](https://github.com/Mishiez/knowledge-hub) for the complete `docker compose up` instructions that bring up the frontend, backend, and database together from the backend repo.
+
+To build this image standalone:
+
+```bash
+docker build -t knowledgehub-frontend --build-arg VITE_API_BASE_URL=http://localhost:8000/api .
+```
+
+`VITE_API_BASE_URL` must be passed as a **build argument**, not a runtime environment variable — Vite bakes environment variables into the JavaScript bundle at build time, so setting it only at container runtime has no effect on the already-built files.
+
+The resulting image is a multi-stage build: a Node stage runs `npm run build`, then only the static `dist/` output is copied into a minimal `nginx:alpine` image — no Node runtime or dev dependencies ship in the final image.
+
+## Getting Started (without Docker)
 
 ```bash
 npm install
@@ -67,9 +82,11 @@ Drives a real Chromium browser against the real running app and real Django back
 ## Project Structure
 
 ```
+Dockerfile
+.dockerignore
 src/
 ├── api/
-│   ├── posts.ts               # Typed fetch wrapper for post CRUD, surfaces backend validation errors
+│   ├── posts.ts               # Typed fetch wrapper for post CRUD, likes, surfaces backend validation errors
 │   ├── auth.ts                 # Typed fetch wrapper for register/login/logout
 │   └── comments.ts             # Typed fetch wrapper for comment list/create/delete
 ├── context/
@@ -103,13 +120,13 @@ src/
 ├── pages/
 │   ├── HomePage.tsx                        # Post list: search, pagination, real API data
 │   ├── HomePage.test.tsx
-│   ├── PostDetailPage.tsx                   # Single post view, comments, owner-only Edit/Delete
+│   ├── PostDetailPage.tsx                   # Single post view, comments, likes, owner-only Edit/Delete
 │   ├── PostFormPage.tsx                      # Shared create/edit form, client + backend validation
 │   ├── PostFormPage.test.tsx
 │   ├── LoginPage.tsx
 │   └── RegisterPage.tsx
 ├── types/
-│   ├── post.ts                                # Post data contract
+│   ├── post.ts                                # Post data contract (includes like_count)
 │   ├── auth.ts                                 # User / AuthResponse contracts
 │   └── comment.ts                               # Comment data contract
 ├── App.tsx                                       # Route definitions
@@ -122,20 +139,21 @@ tests/
 
 ## Architecture Notes
 
-- **Data boundary:** components never call `fetch` directly — they call typed functions like `getPosts()` from `api/posts.ts`, which return `Promise<Post[]>`. This is the same contract the project started with when `getPosts()` was still backed by mock data, so connecting the real backend required no changes to any component.
-- **Derived vs. stored state:** `filteredPosts`, `visiblePosts`, and `totalPages` on `HomePage` are calculated on render from `posts`, `searchTerm`, and `currentPage` rather than stored separately, so they can never fall out of sync with each other.
-- **Auth and Toast contexts are split into two files each** (`*Context.ts` for the context object and hook, `*Provider.tsx` for the component). This isn't just style — a file that exports both a component and non-component values breaks Vite's fast-refresh, since it can't tell what to hot-reload. Splitting them satisfies the `react-refresh/only-export-components` lint rule.
-- **Auth state is global, page state is local:** `AuthProvider` holds the current user and token because the header, route guards, and ownership checks all need it. Everything else (search term, current page, form fields) stays local to the component that owns it.
-- **Ownership enforcement, frontend side:** `PostDetailPage` compares the logged-in user's username against a post's or comment's `author` field to decide whether to show Edit/Delete controls. This is a UI convenience only — the backend independently enforces ownership via a `403` response on any unauthorized write, regardless of what the frontend displays. (Confirmed necessary: an earlier backend gap meant `PostDetailView` had no ownership check at all — the frontend correctly hid the buttons, but the API itself would have allowed the edit. Backend tests are what actually catch this class of bug; the frontend hiding a button is not a security guarantee.)
-- **Token auth:** the API wrapper attaches `Authorization: Token <value>` to any request that needs it, reading the token from `localStorage`. `AuthProvider` is the only piece of code that writes to `localStorage`; API functions only read from it.
-- **Validation:** client-side checks (e.g. minimum title length, non-blank content) catch obvious mistakes before a request is sent. The backend is the actual source of truth for validity — `api/posts.ts` parses error responses from failed requests and surfaces the backend's real message (e.g. "A post with this slug already exists") rather than a generic failure string. Both an inline form error and a toast notification render on validation failure, which is why tests asserting on the error text use `findAllByText`/`getAllByText` rather than the singular form.
-- **E2E test data:** the Playwright test registers a fresh, timestamp-suffixed username and post title on every run, rather than reusing fixed values. This avoids the "duplicate slug" validation error the backend correctly enforces, and means the test can be re-run any number of times without manual cleanup.
+- **API calls go through one place.** Components never call `fetch` directly — they use typed functions like `getPosts()` from `api/posts.ts`. This kept the switch from mock data to the real backend from requiring any component changes.
+- **Some state is calculated, not stored.** `filteredPosts`, `visiblePosts`, and `totalPages` on `HomePage` are recalculated from `posts`, `searchTerm`, and `currentPage` on every render instead of living in their own `useState`. That way they can never drift out of sync with the data they're based on.
+- **Contexts are split into two files each** (e.g. `AuthContext.ts` + `AuthProvider.tsx`). Vite's fast-refresh breaks if a file exports both a component and non-component values, so the context/hook and the provider component live separately.
+- **Auth is global, everything else is local.** `AuthProvider` holds the logged-in user and token because the header, route guards, and ownership checks all need them. Page-specific things like search term or form fields stay local to the page that owns them.
+- **Frontend ownership checks are UI-only, not security.** `PostDetailPage` compares the logged-in username to a post's author to decide whether to show Edit/Delete. The backend is what actually blocks unauthorized changes, with a `403` response — the frontend hiding a button never counts as real protection on its own.
+- **Tokens live in `localStorage`.** `AuthProvider` is the only code that writes to it; the API layer only reads from it when attaching the `Authorization` header.
+- **Validation happens on both sides.** The frontend catches obvious mistakes (like a too-short title) before sending a request. The backend is the real authority — if it rejects something, `api/posts.ts` reads the actual error message from the response and shows that, instead of a generic failure message.
+- **E2E tests use fresh, unique data every run** (a timestamp-suffixed username and post title), so the test can be run repeatedly without hitting duplicate-data errors from a previous run.
+- **The API URL must be set at build time, not runtime, in Docker.** Vite bakes `VITE_API_BASE_URL` into the JavaScript bundle when it's built, so it has to be passed in as a Docker build argument — setting it as a container environment variable afterward has no effect.
 
 ## Current Scope
 
-**Included:** real-time post fetching from a live Django API, search filtering, pagination, loading/empty/error states, user registration and login, token-based auth persisted across page reloads, protected routes, post creation/editing/deletion restricted to the post's owner, comment viewing/creation/deletion, client + backend validation with surfaced error messages, a full RTL unit/integration test suite, ESLint + Prettier enforcement, and a Playwright end-to-end test of the core user journey.
+**Included:** real-time post fetching from a live Django API, search filtering, pagination, loading/empty/error states, user registration and login, token-based auth persisted across page reloads, protected routes, post creation/editing/deletion restricted to the post's owner, comment viewing/creation/deletion, post likes, client + backend validation with surfaced error messages, a full RTL unit/integration test suite, ESLint + Prettier enforcement, a Playwright end-to-end test of the core user journey, and a Dockerized production build.
 
-**Excluded (deliberately, for now):** Redux/Zustand, React Query, server-side search/ordering beyond what the backend's `?search=` and `?author__username=` query params provide, route-based code-splitting.
+**Excluded (deliberately, for now):** Redux/Zustand, React Query, server-side search/ordering.
 
 ## Next Steps
 

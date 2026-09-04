@@ -1,0 +1,11 @@
+# Default owner for everything in the repo
+*                       @Mishiez
+
+# React source
+/src/                   @Mishiez
+
+# End-to-end tests
+/tests/                 @Mishiez
+
+# CI/CD and repo hygiene files
+/.github/               @Mishiez

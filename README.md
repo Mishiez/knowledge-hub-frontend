@@ -68,15 +68,19 @@ npm run test:e2e             # run the Playwright end-to-end test (requires the 
 ## Running Tests
 
 **Unit/integration (Vitest + RTL):**
+
 ```bash
 npm test
 ```
+
 Covers component rendering, user interactions (search, pagination, form submission), auth-gated routing, and async loading/error timing — all against a mocked API layer via `vi.spyOn`.
 
 **End-to-end (Playwright):**
+
 ```bash
 npm run test:e2e
 ```
+
 Drives a real Chromium browser against the real running app and real Django backend — no mocking. Covers the full core journey: register a new user → land logged in → create a post → confirm it renders on its detail page → navigate home → confirm it appears in the post list. Requires the Django backend to be running separately; Playwright auto-starts the Vite dev server if it isn't already running.
 
 ## Project Structure

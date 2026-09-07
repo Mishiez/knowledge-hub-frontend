@@ -77,8 +77,8 @@ describe('HomePage — interactions', () => {
     const searchInput = screen.getByPlaceholderText(/search posts/i);
     await user.type(searchInput, 'Title 5');
 
-    expect(screen.getByText('Test Post Title 5')).toBeInTheDocument();
-    expect(screen.queryByText('This will definitely fail')).not.toBeInTheDocument();
+    expect(screen.getByText('This Will Definitely Fail')).toBeInTheDocument();
+    expect(screen.queryByText('Test Post Title 1')).not.toBeInTheDocument();
   });
 
   it('clicking Next shows the next page', async () => {

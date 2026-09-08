@@ -61,7 +61,7 @@ jobs:
           context: .
           push: true
           build-args: |
-            VITE_API_BASE_URL=http://${{ secrets.STAGING_HOST }}:8000/api
+            VITE_API_BASE_URL=/api
           tags: |
             ghcr.io/${{ env.OWNER_LC }}/knowledge-hub-frontend:latest
             ghcr.io/${{ env.OWNER_LC }}/knowledge-hub-frontend:${{ github.sha }}

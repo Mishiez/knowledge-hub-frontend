@@ -22,12 +22,14 @@ This repo is built as part of the full Knowledge Hub stack — see the [backend 
 To build this image standalone:
 
 ```bash
-docker build -t knowledgehub-frontend --build-arg VITE_API_BASE_URL=http://localhost:8000/api .
+docker build -t knowledgehub-frontend --build-arg VITE_API_BASE_URL=/api .
 ```
 
-`VITE_API_BASE_URL` must be passed as a **build argument**, not a runtime environment variable — Vite bakes environment variables into the JavaScript bundle at build time, so setting it only at container runtime has no effect on the already-built files.
+`VITE_API_BASE_URL` must be passed as a **build argument**, not a runtime environment variable — Vite bakes environment variables into the JavaScript bundle at build time, so setting it only at container runtime has no effect on the already-built files. In Docker, use `/api` so Nginx can proxy API calls to the backend on the internal network.
 
 The resulting image is a multi-stage build: a Node stage runs `npm run build`, then only the static `dist/` output is copied into a minimal `nginx:alpine` image — no Node runtime or dev dependencies ship in the final image.
+
+The Nginx container serves the SPA and forwards `/api/` to `backend:8000` over Docker's internal network. Publish port 80 from this container; do not publish the Django container's port.
 
 ## Getting Started (without Docker)
 
